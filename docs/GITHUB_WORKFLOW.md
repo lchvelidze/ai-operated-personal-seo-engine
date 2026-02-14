@@ -54,6 +54,22 @@ git commit -m "feat(scope): describe change"
 git push -u origin feat/my-change
 ```
 
+## Local guard rails
+
+This repo includes `.githooks/pre-push` to block direct pushes to `main` from local git.
+
+Activate hooks (already configured on this machine):
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Emergency override (use rarely):
+
+```bash
+ALLOW_PROTECTED_PUSH=1 git push origin main
+```
+
 ## Merge strategy
 
 - Prefer **Squash and merge** for cleaner history.
