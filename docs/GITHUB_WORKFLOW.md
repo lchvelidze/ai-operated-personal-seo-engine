@@ -44,14 +44,41 @@ Use clear, descriptive conventional commits:
 
 ## Local command sequence
 
+Manual (raw git):
+
 ```bash
 git checkout develop
-git pull origin develop
+git pull --ff-only origin develop
 git checkout -b feat/my-change
 # ...edit files...
 git add .
 git commit -m "feat(scope): describe change"
 git push -u origin feat/my-change
+```
+
+Automated (recommended):
+
+```bash
+# 1) One-time setup: apply commit template (.github/commit-message-template.txt)
+corepack pnpm git:commit-template
+
+# 2) Start a feature branch from develop
+corepack pnpm git:feature -- feat/my-change
+
+# 3) Stage + guided conventional commit
+git add -A
+corepack pnpm git:commit
+
+# 4) Push branch + create PR to develop (or print compare URL)
+corepack pnpm git:pr
+```
+
+Direct script equivalents:
+
+```bash
+bash scripts/git-start-feature.sh feat/my-change
+bash scripts/git-guided-commit.sh
+bash scripts/git-push-pr.sh
 ```
 
 ## Local guard rails

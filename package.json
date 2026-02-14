@@ -17,6 +17,10 @@
     "seed:demo-user": "DATABASE_URL=${DATABASE_URL:-postgresql://seo_user:seo_dev_password@localhost:5432/seo_engine?schema=public} corepack pnpm --filter @seo-engine/api seed:demo-user",
     "seed:demo-users": "DATABASE_URL=${DATABASE_URL:-postgresql://seo_user:seo_dev_password@localhost:5432/seo_engine?schema=public} corepack pnpm --filter @seo-engine/api seed:demo-users",
     "verify:login": "node scripts/verify-login.mjs",
-    "repair:login": "corepack pnpm seed:demo-users && corepack pnpm verify:login"
+    "repair:login": "corepack pnpm seed:demo-users && corepack pnpm verify:login",
+    "git:feature": "bash scripts/git-start-feature.sh",
+    "git:commit": "bash scripts/git-guided-commit.sh",
+    "git:pr": "bash scripts/git-push-pr.sh",
+    "git:commit-template": "git config commit.template .github/commit-message-template.txt"
   }
 }

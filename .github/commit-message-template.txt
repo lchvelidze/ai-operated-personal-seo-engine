@@ -1,0 +1,17 @@
+# Conventional Commit template
+#
+# Format:
+#   <type>(<scope>): <summary>
+#
+# Types:
+#   feat, fix, chore, docs, refactor, test
+#
+# Examples:
+#   feat(api): add rank snapshot filters
+#   fix(web/auth): prevent refresh token loop
+#
+# Optional body (what/why):
+#
+# Optional footer (issue refs):
+#   Closes #123
+
