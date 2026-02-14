@@ -1,0 +1,28 @@
+{
+  "name": "@seo-engine/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "test": "tsx --test --test-concurrency=1 test/**/*.test.ts",
+    "seed:demo-user": "tsx src/scripts/seed-demo-user.ts",
+    "seed:demo-users": "tsx src/scripts/seed-demo-user.ts"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.1",
+    "@prisma/client": "^6.19.2",
+    "bcryptjs": "^2.4.3",
+    "fastify": "^5.0.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

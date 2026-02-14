@@ -1,0 +1,2564 @@
+openapi: 3.0.3
+info:
+  title: AI-Operated Personal SEO Engine API
+  version: v1
+  description: Minimal endpoint stubs for initial implementation.
+servers:
+  - url: /v1
+security:
+  - bearerAuth: []
+paths:
+  /auth/api-keys:
+    get:
+      summary: List API keys
+      responses:
+        '200':
+          description: API keys
+    post:
+      summary: Create API key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApiKeyRequest'
+      responses:
+        '201':
+          description: API key created
+  /auth/api-keys/{keyId}:
+    delete:
+      summary: Revoke API key
+      parameters:
+        - $ref: '#/components/parameters/KeyId'
+      responses:
+        '204':
+          description: API key revoked
+
+  /assistant/tasks:
+    get:
+      summary: List assistant tasks
+      responses:
+        '200':
+          description: Task list
+    post:
+      summary: Create assistant task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '202':
+          description: Task accepted
+  /assistant/tasks/{taskId}:
+    get:
+      summary: Get assistant task status
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Task details
+
+  /pages:
+    get:
+      summary: List pages
+      responses:
+        '200':
+          description: Page list
+    post:
+      summary: Create page
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Page'
+      responses:
+        '201':
+          description: Page created
+  /pages/{pageId}:
+    get:
+      summary: Get page
+      parameters:
+        - $ref: '#/components/parameters/PageId'
+      responses:
+        '200':
+          description: Page details
+    patch:
+      summary: Update page
+      parameters:
+        - $ref: '#/components/parameters/PageId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PageUpdate'
+      responses:
+        '200':
+          description: Page updated
+    delete:
+      summary: Delete page
+      parameters:
+        - $ref: '#/components/parameters/PageId'
+      responses:
+        '204':
+          description: Page deleted
+  /pages/{pageId}/publish:
+    post:
+      summary: Publish page
+      parameters:
+        - $ref: '#/components/parameters/PageId'
+      responses:
+        '202':
+          description: Publish started
+  /pages/{pageId}/request-indexing:
+    post:
+      summary: Request indexing for page
+      parameters:
+        - $ref: '#/components/parameters/PageId'
+      responses:
+        '202':
+          description: Indexing request accepted
+
+  /keywords:
+    get:
+      summary: List keywords
+      responses:
+        '200':
+          description: Keyword list
+    post:
+      summary: Create keyword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Keyword'
+      responses:
+        '201':
+          description: Keyword created
+  /keywords/{keywordId}:
+    get:
+      summary: Get keyword
+      parameters:
+        - $ref: '#/components/parameters/KeywordId'
+      responses:
+        '200':
+          description: Keyword details
+    patch:
+      summary: Update keyword
+      parameters:
+        - $ref: '#/components/parameters/KeywordId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeywordUpdate'
+      responses:
+        '200':
+          description: Keyword updated
+    delete:
+      summary: Delete keyword
+      parameters:
+        - $ref: '#/components/parameters/KeywordId'
+      responses:
+        '204':
+          description: Keyword deleted
+
+  /rank-snapshots:
+    get:
+      summary: List rank snapshots
+      responses:
+        '200':
+          description: Rank snapshot list
+    post:
+      summary: Ingest rank snapshot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RankSnapshotIngest'
+      responses:
+        '201':
+          description: Rank snapshot created
+
+  /page-sections:
+    get:
+      summary: List page sections
+      responses:
+        '200':
+          description: Page section list
+    post:
+      summary: Create page section
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PageSectionCreate'
+      responses:
+        '201':
+          description: Page section created
+  /page-sections/{sectionId}:
+    get:
+      summary: Get page section
+      parameters:
+        - $ref: '#/components/parameters/SectionId'
+      responses:
+        '200':
+          description: Page section details
+    patch:
+      summary: Update page section
+      parameters:
+        - $ref: '#/components/parameters/SectionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PageSectionUpdate'
+      responses:
+        '200':
+          description: Page section updated
+    delete:
+      summary: Delete page section
+      parameters:
+        - $ref: '#/components/parameters/SectionId'
+      responses:
+        '204':
+          description: Page section deleted
+
+  /content-briefs:
+    get:
+      summary: List content briefs
+      responses:
+        '200':
+          description: Brief list
+    post:
+      summary: Create content brief
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentBriefCreate'
+      responses:
+        '201':
+          description: Brief created
+  /content-briefs/{briefId}:
+    get:
+      summary: Get content brief
+      parameters:
+        - $ref: '#/components/parameters/BriefId'
+      responses:
+        '200':
+          description: Brief details
+    patch:
+      summary: Update content brief
+      parameters:
+        - $ref: '#/components/parameters/BriefId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentBriefUpdate'
+      responses:
+        '200':
+          description: Brief updated
+    delete:
+      summary: Delete content brief
+      parameters:
+        - $ref: '#/components/parameters/BriefId'
+      responses:
+        '204':
+          description: Brief deleted
+
+  /content-tasks:
+    get:
+      summary: List content tasks
+      responses:
+        '200':
+          description: Task list
+    post:
+      summary: Create content task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentTaskCreate'
+      responses:
+        '201':
+          description: Task created
+  /content-tasks/{contentTaskId}:
+    get:
+      summary: Get content task
+      parameters:
+        - $ref: '#/components/parameters/ContentTaskId'
+      responses:
+        '200':
+          description: Task details
+    patch:
+      summary: Update content task fields
+      parameters:
+        - $ref: '#/components/parameters/ContentTaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentTaskUpdate'
+      responses:
+        '200':
+          description: Task updated
+    delete:
+      summary: Delete content task
+      parameters:
+        - $ref: '#/components/parameters/ContentTaskId'
+      responses:
+        '204':
+          description: Task deleted
+  /content-tasks/{contentTaskId}/transition:
+    post:
+      summary: Transition content task status
+      parameters:
+        - $ref: '#/components/parameters/ContentTaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentTaskTransition'
+      responses:
+        '200':
+          description: Task transitioned
+  /content-tasks/{contentTaskId}/history:
+    get:
+      summary: List content task transition history (chronological oldest to newest)
+      parameters:
+        - $ref: '#/components/parameters/ContentTaskId'
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Transition history list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ContentTaskTransitionHistoryEntry'
+                  meta:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      total:
+                        type: integer
+                      totalPages:
+                        type: integer
+                      order:
+                        type: string
+                        enum: [createdAt_asc]
+
+  /internal-links:
+    get:
+      summary: List internal links
+      responses:
+        '200':
+          description: Internal link list
+    post:
+      summary: Create internal link
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalLinkCreate'
+      responses:
+        '201':
+          description: Internal link created
+  /internal-links/{internalLinkId}:
+    get:
+      summary: Get internal link
+      parameters:
+        - $ref: '#/components/parameters/InternalLinkId'
+      responses:
+        '200':
+          description: Internal link details
+    patch:
+      summary: Update internal link
+      parameters:
+        - $ref: '#/components/parameters/InternalLinkId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalLinkUpdate'
+      responses:
+        '200':
+          description: Internal link updated
+    delete:
+      summary: Delete internal link
+      parameters:
+        - $ref: '#/components/parameters/InternalLinkId'
+      responses:
+        '204':
+          description: Internal link deleted
+
+  /backlink-opportunities:
+    get:
+      summary: List backlink opportunities
+      responses:
+        '200':
+          description: Backlink opportunity list
+    post:
+      summary: Create backlink opportunity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BacklinkOpportunityCreate'
+      responses:
+        '201':
+          description: Backlink opportunity created
+  /backlink-opportunities/{opportunityId}:
+    get:
+      summary: Get backlink opportunity
+      parameters:
+        - $ref: '#/components/parameters/BacklinkOpportunityId'
+      responses:
+        '200':
+          description: Backlink opportunity details
+    patch:
+      summary: Update backlink opportunity
+      parameters:
+        - $ref: '#/components/parameters/BacklinkOpportunityId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BacklinkOpportunityUpdate'
+      responses:
+        '200':
+          description: Backlink opportunity updated
+    delete:
+      summary: Delete backlink opportunity
+      parameters:
+        - $ref: '#/components/parameters/BacklinkOpportunityId'
+      responses:
+        '204':
+          description: Backlink opportunity deleted
+
+  /audits/run:
+    post:
+      summary: Run site audit
+      responses:
+        '202':
+          description: Audit started
+  /audits/issues:
+    get:
+      summary: List audit issues
+      responses:
+        '200':
+          description: Issue list
+  /audits/issues/{issueId}:
+    patch:
+      summary: Update audit issue status
+      parameters:
+        - $ref: '#/components/parameters/IssueId'
+      responses:
+        '200':
+          description: Issue updated
+
+  /integrations/gsc/sync:
+    post:
+      summary: Sync from Google Search Console
+      responses:
+        '202':
+          description: Sync started
+
+  /analytics/kpis:
+    get:
+      summary: Get KPI summary (owner-scoped, optional project scope)
+      parameters:
+        - $ref: '#/components/parameters/AnalyticsProjectId'
+        - $ref: '#/components/parameters/AnalyticsFrom'
+        - $ref: '#/components/parameters/AnalyticsTo'
+      responses:
+        '200':
+          description: KPI summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AnalyticsKpiSummary'
+
+  /analytics/funnels:
+    get:
+      summary: Get analytics funnel metrics (content tasks, backlink outreach, internal link statuses)
+      parameters:
+        - $ref: '#/components/parameters/AnalyticsProjectId'
+        - $ref: '#/components/parameters/AnalyticsFrom'
+        - $ref: '#/components/parameters/AnalyticsTo'
+      responses:
+        '200':
+          description: Funnel metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AnalyticsFunnelSummary'
+
+  /analytics/export:
+    get:
+      summary: Export analytics datasets as JSON or CSV
+      parameters:
+        - name: dataset
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [kpis, contentTasks, backlinkOpportunities, internalLinks]
+            default: kpis
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [json, csv]
+            default: json
+        - $ref: '#/components/parameters/AnalyticsProjectId'
+        - $ref: '#/components/parameters/AnalyticsFrom'
+        - $ref: '#/components/parameters/AnalyticsTo'
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+        - name: contentTaskStatus
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [TODO, IN_PROGRESS, BLOCKED, DONE, FAILED]
+        - name: outreachStatus
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [NEW, CONTACTED, RESPONDED, WON, LOST]
+        - name: linkStatus
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [SUGGESTED, APPLIED, IGNORED]
+      responses:
+        '200':
+          description: Export payload (JSON object or CSV file)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AnalyticsExportJson'
+            text/csv:
+              schema:
+                type: string
+                description: CSV file contents
+
+  /automation/jobs:
+    get:
+      summary: List owner-scoped automation jobs
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: projectId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [ACTIVE, PAUSED, DEAD_LETTER]
+        - name: cadence
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [DAILY, WEEKLY]
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [ANALYTICS_SNAPSHOT, ANALYTICS_EXPORT]
+      responses:
+        '200':
+          description: Automation jobs list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AutomationJob'
+                  meta:
+                    $ref: '#/components/schemas/ListMeta'
+    post:
+      summary: Create an automation job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomationJobCreate'
+      responses:
+        '201':
+          description: Automation job created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationJob'
+
+  /automation/jobs/process-due:
+    post:
+      summary: Process due daily/weekly jobs for the authenticated owner
+      description: Deterministic manual tick endpoint. Uses the same scheduler path as the background loop, including catch-up policy handling, DST rules, retry/backoff progression, and dead-letter transitions.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomationProcessDueRequest'
+      responses:
+        '200':
+          description: Due jobs processed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationProcessDueResponse'
+
+  /automation/scheduler/diagnostics:
+    get:
+      summary: Scheduler and owner-safe automation diagnostics
+      description: Returns scheduler runtime/tick diagnostics plus owner-scoped automation run health counters.
+      responses:
+        '200':
+          description: Scheduler diagnostics payload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationSchedulerDiagnostics'
+
+  /automation/scheduler/diagnostics/history:
+    get:
+      summary: List persisted scheduler diagnostics history
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+        - name: reason
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [startup, interval]
+        - name: outcome
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [processed, idle, contention, error, skipped-overlap]
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Persisted diagnostics history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AutomationSchedulerTickHistoryItem'
+                  meta:
+                    $ref: '#/components/schemas/ListMeta'
+
+  /automation/alerts:
+    get:
+      summary: List owner-visible automation alerts (owner + global)
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [OPEN, ACKNOWLEDGED]
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [DEAD_LETTER_GROWTH, FAILURE_RATE, CONSECUTIVE_FAILURES, LOCK_CONTENTION_SPIKE]
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Automation alerts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AutomationAlertEvent'
+                  meta:
+                    $ref: '#/components/schemas/ListMeta'
+
+  /automation/alerts/{id}/ack:
+    post:
+      summary: Acknowledge an automation alert
+      parameters:
+        - $ref: '#/components/parameters/AutomationAlertId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note:
+                  type: string
+                  maxLength: 500
+      responses:
+        '200':
+          description: Alert acknowledged
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationAlertEvent'
+
+  /automation/dlq/jobs:
+    get:
+      summary: List owner dead-letter jobs
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: projectId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: acknowledged
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: DLQ jobs list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AutomationJob'
+                  meta:
+                    $ref: '#/components/schemas/ListMeta'
+
+  /automation/dlq/runs:
+    get:
+      summary: List failed runs for dead-letter jobs
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: projectId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: jobId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: DLQ failed run list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AutomationJobRun'
+                  meta:
+                    $ref: '#/components/schemas/ListMeta'
+
+  /automation/dlq/jobs/{id}/ack:
+    post:
+      summary: Acknowledge a dead-letter job
+      parameters:
+        - $ref: '#/components/parameters/AutomationJobId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note:
+                  type: string
+                  maxLength: 500
+      responses:
+        '200':
+          description: DLQ job acknowledged
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationDlqActionResult'
+
+  /automation/dlq/jobs/{id}/requeue:
+    post:
+      summary: Requeue a dead-letter job back to ACTIVE schedule
+      parameters:
+        - $ref: '#/components/parameters/AutomationJobId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recomputeFrom:
+                  type: string
+                  format: date-time
+                note:
+                  type: string
+                  maxLength: 500
+      responses:
+        '200':
+          description: DLQ job requeued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationDlqActionResult'
+
+  /automation/dlq/jobs/{id}/retry-now:
+    post:
+      summary: Retry a dead-letter job immediately
+      parameters:
+        - $ref: '#/components/parameters/AutomationJobId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                note:
+                  type: string
+                  maxLength: 500
+      responses:
+        '200':
+          description: DLQ retry-now executed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationDlqActionResult'
+
+  /automation/dlq/jobs/bulk/ack:
+    post:
+      summary: Bulk acknowledge dead-letter jobs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomationDlqBulkActionRequest'
+      responses:
+        '200':
+          description: Bulk DLQ acknowledge result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationDlqBulkActionResponse'
+
+  /automation/dlq/jobs/bulk/requeue:
+    post:
+      summary: Bulk requeue dead-letter jobs back to ACTIVE schedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/AutomationDlqBulkActionRequest'
+                - type: object
+                  properties:
+                    recomputeFrom:
+                      type: string
+                      format: date-time
+      responses:
+        '200':
+          description: Bulk DLQ requeue result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationDlqBulkActionResponse'
+
+  /automation/dlq/jobs/bulk/retry-now:
+    post:
+      summary: Bulk retry dead-letter jobs immediately
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomationDlqBulkActionRequest'
+      responses:
+        '200':
+          description: Bulk DLQ retry-now result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationDlqBulkActionResponse'
+
+  /automation/jobs/{id}:
+    get:
+      summary: Get a single owner-scoped automation job
+      parameters:
+        - $ref: '#/components/parameters/AutomationJobId'
+      responses:
+        '200':
+          description: Automation job details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationJob'
+    patch:
+      summary: Update an automation job
+      parameters:
+        - $ref: '#/components/parameters/AutomationJobId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutomationJobUpdate'
+      responses:
+        '200':
+          description: Automation job updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationJob'
+    delete:
+      summary: Delete an automation job
+      parameters:
+        - $ref: '#/components/parameters/AutomationJobId'
+      responses:
+        '204':
+          description: Automation job deleted
+
+  /automation/jobs/{id}/trigger:
+    post:
+      summary: Trigger an automation job immediately
+      parameters:
+        - $ref: '#/components/parameters/AutomationJobId'
+      responses:
+        '200':
+          description: Job run completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/AutomationJobRun'
+
+  /automation/jobs/{id}/runs:
+    get:
+      summary: List runs for an automation job
+      parameters:
+        - $ref: '#/components/parameters/AutomationJobId'
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Automation run history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AutomationJobRun'
+                  meta:
+                    $ref: '#/components/schemas/ListMeta'
+
+  /webhooks/publish:
+    post:
+      summary: Publish webhook callback
+      security: []
+      responses:
+        '200':
+          description: Webhook accepted
+  /webhooks/job-status:
+    post:
+      summary: Job status webhook callback
+      security: []
+      responses:
+        '200':
+          description: Webhook accepted
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    KeyId:
+      name: keyId
+      in: path
+      required: true
+      schema:
+        type: string
+    TaskId:
+      name: taskId
+      in: path
+      required: true
+      schema:
+        type: string
+    PageId:
+      name: pageId
+      in: path
+      required: true
+      schema:
+        type: string
+    KeywordId:
+      name: keywordId
+      in: path
+      required: true
+      schema:
+        type: string
+    BriefId:
+      name: briefId
+      in: path
+      required: true
+      schema:
+        type: string
+    SectionId:
+      name: sectionId
+      in: path
+      required: true
+      schema:
+        type: string
+    ContentTaskId:
+      name: contentTaskId
+      in: path
+      required: true
+      schema:
+        type: string
+    InternalLinkId:
+      name: internalLinkId
+      in: path
+      required: true
+      schema:
+        type: string
+    BacklinkOpportunityId:
+      name: opportunityId
+      in: path
+      required: true
+      schema:
+        type: string
+    IssueId:
+      name: issueId
+      in: path
+      required: true
+      schema:
+        type: string
+    AutomationJobId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    AutomationAlertId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    AnalyticsProjectId:
+      name: projectId
+      in: query
+      required: false
+      schema:
+        type: string
+    AnalyticsFrom:
+      name: from
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+    AnalyticsTo:
+      name: to
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+  schemas:
+    CreateApiKeyRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+    CreateTaskRequest:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+        payload:
+          type: object
+          additionalProperties: true
+    Page:
+      type: object
+      properties:
+        path:
+          type: string
+        title:
+          type: string
+        metaDescription:
+          type: string
+        status:
+          type: string
+          enum: [DRAFT, REVIEW, PUBLISHED, ARCHIVED]
+    PageUpdate:
+      allOf:
+        - $ref: '#/components/schemas/Page'
+    Keyword:
+      type: object
+      required: [projectId, term]
+      properties:
+        projectId:
+          type: string
+        pageId:
+          type: string
+          nullable: true
+        term:
+          type: string
+        intent:
+          type: string
+          enum: [INFORMATIONAL, COMMERCIAL, TRANSACTIONAL, NAVIGATIONAL]
+          nullable: true
+        locale:
+          type: string
+        device:
+          type: string
+          enum: [DESKTOP, MOBILE]
+        isActive:
+          type: boolean
+    KeywordUpdate:
+      type: object
+      properties:
+        pageId:
+          type: string
+          nullable: true
+        term:
+          type: string
+        intent:
+          type: string
+          enum: [INFORMATIONAL, COMMERCIAL, TRANSACTIONAL, NAVIGATIONAL]
+          nullable: true
+        locale:
+          type: string
+        device:
+          type: string
+          enum: [DESKTOP, MOBILE]
+        isActive:
+          type: boolean
+    RankSnapshotIngest:
+      type: object
+      required: [keywordId]
+      properties:
+        keywordId:
+          type: string
+        recordedAt:
+          type: string
+          format: date-time
+        engine:
+          type: string
+          enum: [GOOGLE, BING]
+        locale:
+          type: string
+        device:
+          type: string
+          enum: [DESKTOP, MOBILE]
+        rank:
+          type: integer
+          nullable: true
+          minimum: 1
+          maximum: 100
+        url:
+          type: string
+          format: uri
+    PageSectionCreate:
+      type: object
+      required: [pageId, content, order]
+      properties:
+        pageId:
+          type: string
+        kind:
+          type: string
+          enum: [HERO, INTRO, BODY, FAQ, CTA, CUSTOM]
+        heading:
+          type: string
+        content:
+          type: string
+        order:
+          type: integer
+          minimum: 0
+        wordCount:
+          type: integer
+          minimum: 0
+          nullable: true
+    PageSectionUpdate:
+      type: object
+      properties:
+        kind:
+          type: string
+          enum: [HERO, INTRO, BODY, FAQ, CTA, CUSTOM]
+        heading:
+          type: string
+          nullable: true
+        content:
+          type: string
+        order:
+          type: integer
+          minimum: 0
+        wordCount:
+          type: integer
+          minimum: 0
+          nullable: true
+
+    ContentBriefCreate:
+      type: object
+      required: [projectId, title]
+      properties:
+        projectId:
+          type: string
+        pageId:
+          type: string
+        keywordId:
+          type: string
+        title:
+          type: string
+        objective:
+          type: string
+        audience:
+          type: string
+        outline:
+          type: object
+          additionalProperties: true
+          nullable: true
+        status:
+          type: string
+          enum: [DRAFT, READY, APPROVED, ARCHIVED]
+        generatedBy:
+          type: string
+    ContentBriefUpdate:
+      type: object
+      properties:
+        pageId:
+          type: string
+          nullable: true
+        keywordId:
+          type: string
+          nullable: true
+        title:
+          type: string
+        objective:
+          type: string
+          nullable: true
+        audience:
+          type: string
+          nullable: true
+        outline:
+          type: object
+          additionalProperties: true
+          nullable: true
+        status:
+          type: string
+          enum: [DRAFT, READY, APPROVED, ARCHIVED]
+        generatedBy:
+          type: string
+          nullable: true
+
+    ContentTaskCreate:
+      type: object
+      required: [projectId, type]
+      properties:
+        projectId:
+          type: string
+        briefId:
+          type: string
+        pageId:
+          type: string
+        type:
+          type: string
+          enum: [WRITE, OPTIMIZE, REFRESH, INTERNAL_LINKS, OUTREACH]
+        status:
+          type: string
+          enum: [TODO, IN_PROGRESS, BLOCKED, DONE, FAILED]
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 5
+        payload:
+          type: object
+          additionalProperties: true
+          nullable: true
+        result:
+          type: object
+          additionalProperties: true
+          nullable: true
+        error:
+          type: string
+        dueAt:
+          type: string
+          format: date-time
+
+    ContentTaskUpdate:
+      type: object
+      properties:
+        briefId:
+          type: string
+          nullable: true
+        pageId:
+          type: string
+          nullable: true
+        type:
+          type: string
+          enum: [WRITE, OPTIMIZE, REFRESH, INTERNAL_LINKS, OUTREACH]
+        priority:
+          type: integer
+          minimum: 1
+          maximum: 5
+        payload:
+          type: object
+          additionalProperties: true
+          nullable: true
+        result:
+          type: object
+          additionalProperties: true
+          nullable: true
+        error:
+          type: string
+          nullable: true
+        dueAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    ContentTaskTransition:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [TODO, IN_PROGRESS, BLOCKED, DONE, FAILED]
+        error:
+          type: string
+          nullable: true
+        result:
+          type: object
+          additionalProperties: true
+          nullable: true
+        note:
+          type: string
+          nullable: true
+
+    ContentTaskTransitionHistoryEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        contentTaskId:
+          type: string
+        fromStatus:
+          type: string
+          enum: [TODO, IN_PROGRESS, BLOCKED, DONE, FAILED]
+        toStatus:
+          type: string
+          enum: [TODO, IN_PROGRESS, BLOCKED, DONE, FAILED]
+        note:
+          type: string
+          nullable: true
+        actor:
+          type: object
+          properties:
+            userId:
+              type: string
+              nullable: true
+            email:
+              type: string
+            source:
+              type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    InternalLinkCreate:
+      type: object
+      required: [projectId, sourcePageId, targetPageId, anchorText]
+      properties:
+        projectId:
+          type: string
+        sourcePageId:
+          type: string
+        targetPageId:
+          type: string
+        anchorText:
+          type: string
+        status:
+          type: string
+          enum: [SUGGESTED, APPLIED, IGNORED]
+        reason:
+          type: string
+
+    InternalLinkUpdate:
+      type: object
+      properties:
+        sourcePageId:
+          type: string
+        targetPageId:
+          type: string
+        anchorText:
+          type: string
+        status:
+          type: string
+          enum: [SUGGESTED, APPLIED, IGNORED]
+        reason:
+          type: string
+          nullable: true
+
+    BacklinkOpportunityCreate:
+      type: object
+      required: [projectId, sourceDomain, targetUrl]
+      properties:
+        projectId:
+          type: string
+        sourceDomain:
+          type: string
+        targetUrl:
+          type: string
+          format: uri
+        contactEmail:
+          type: string
+          format: email
+        authorityScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+          nullable: true
+        status:
+          type: string
+          enum: [NEW, CONTACTED, RESPONDED, WON, LOST]
+        notes:
+          type: string
+        nextActionAt:
+          type: string
+          format: date-time
+        lastContactedAt:
+          type: string
+          format: date-time
+
+    BacklinkOpportunityUpdate:
+      type: object
+      properties:
+        sourceDomain:
+          type: string
+        targetUrl:
+          type: string
+          format: uri
+        contactEmail:
+          type: string
+          format: email
+          nullable: true
+        authorityScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+          nullable: true
+        status:
+          type: string
+          enum: [NEW, CONTACTED, RESPONDED, WON, LOST]
+        notes:
+          type: string
+          nullable: true
+        nextActionAt:
+          type: string
+          format: date-time
+          nullable: true
+        lastContactedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    AnalyticsScope:
+      type: object
+      properties:
+        projectId:
+          type: string
+          nullable: true
+        from:
+          type: string
+          format: date-time
+          nullable: true
+        to:
+          type: string
+          format: date-time
+          nullable: true
+
+    AnalyticsKpiSummary:
+      type: object
+      properties:
+        scope:
+          $ref: '#/components/schemas/AnalyticsScope'
+        inventory:
+          type: object
+          properties:
+            projects:
+              type: integer
+            pages:
+              type: integer
+            keywords:
+              type: integer
+            activeKeywords:
+              type: integer
+            contentTasks:
+              type: integer
+            internalLinks:
+              type: integer
+            backlinkOpportunities:
+              type: integer
+        activity:
+          type: object
+          properties:
+            rankSnapshots:
+              type: integer
+            averageRank:
+              type: number
+              nullable: true
+            top10Rate:
+              type: number
+              nullable: true
+            contentTasksCreated:
+              type: integer
+            contentTasksCompleted:
+              type: integer
+            contentTaskCompletionRate:
+              type: number
+              nullable: true
+            backlinksCreated:
+              type: integer
+            backlinksWon:
+              type: integer
+            backlinkWinRate:
+              type: number
+              nullable: true
+
+    AnalyticsFunnelStage:
+      type: object
+      properties:
+        stage:
+          type: string
+        count:
+          type: integer
+        percentage:
+          type: number
+
+    AnalyticsFunnelGroup:
+      type: object
+      properties:
+        total:
+          type: integer
+        stages:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalyticsFunnelStage'
+
+    AnalyticsFunnelSummary:
+      type: object
+      properties:
+        scope:
+          $ref: '#/components/schemas/AnalyticsScope'
+        contentTasks:
+          $ref: '#/components/schemas/AnalyticsFunnelGroup'
+        backlinkOutreach:
+          $ref: '#/components/schemas/AnalyticsFunnelGroup'
+        internalLinkStatus:
+          $ref: '#/components/schemas/AnalyticsFunnelGroup'
+
+    AnalyticsExportJson:
+      type: object
+      properties:
+        dataset:
+          type: string
+          enum: [kpis, contentTasks, backlinkOpportunities, internalLinks]
+        scope:
+          $ref: '#/components/schemas/AnalyticsScope'
+        records:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        meta:
+          type: object
+          nullable: true
+          properties:
+            page:
+              type: integer
+            limit:
+              type: integer
+            total:
+              type: integer
+            totalPages:
+              type: integer
+
+    ListMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+    AutomationJobCreate:
+      type: object
+      required: [projectId, name, type, cadence]
+      properties:
+        projectId:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [ANALYTICS_SNAPSHOT, ANALYTICS_EXPORT]
+        cadence:
+          type: string
+          enum: [DAILY, WEEKLY]
+        dayOfWeek:
+          type: integer
+          minimum: 0
+          maximum: 6
+        runAtHour:
+          type: integer
+          minimum: 0
+          maximum: 23
+        runAtMinute:
+          type: integer
+          minimum: 0
+          maximum: 59
+        timezone:
+          type: string
+          description: IANA timezone identifier (for example: UTC, America/New_York)
+        status:
+          type: string
+          enum: [ACTIVE, PAUSED]
+        catchUpMode:
+          type: string
+          enum: [skip-missed, replay-missed]
+        dstAmbiguousTimePolicy:
+          type: string
+          enum: [earlier-offset, later-offset]
+        dstInvalidTimePolicy:
+          type: string
+          enum: [shift-forward, skip]
+        retryMaxAttempts:
+          type: integer
+          minimum: 1
+          maximum: 10
+        retryBackoffSeconds:
+          type: integer
+          minimum: 1
+          maximum: 86400
+        retryMaxBackoffSeconds:
+          type: integer
+          minimum: 1
+          maximum: 86400
+        config:
+          type: object
+          additionalProperties: true
+          nullable: true
+        startAt:
+          type: string
+          format: date-time
+
+    AutomationJobUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [ANALYTICS_SNAPSHOT, ANALYTICS_EXPORT]
+        cadence:
+          type: string
+          enum: [DAILY, WEEKLY]
+        dayOfWeek:
+          type: integer
+          minimum: 0
+          maximum: 6
+          nullable: true
+        runAtHour:
+          type: integer
+          minimum: 0
+          maximum: 23
+        runAtMinute:
+          type: integer
+          minimum: 0
+          maximum: 59
+        timezone:
+          type: string
+          description: IANA timezone identifier (for example: UTC, America/New_York)
+        status:
+          type: string
+          enum: [ACTIVE, PAUSED, DEAD_LETTER]
+        catchUpMode:
+          type: string
+          enum: [skip-missed, replay-missed]
+        dstAmbiguousTimePolicy:
+          type: string
+          enum: [earlier-offset, later-offset]
+        dstInvalidTimePolicy:
+          type: string
+          enum: [shift-forward, skip]
+        retryMaxAttempts:
+          type: integer
+          minimum: 1
+          maximum: 10
+        retryBackoffSeconds:
+          type: integer
+          minimum: 1
+          maximum: 86400
+        retryMaxBackoffSeconds:
+          type: integer
+          minimum: 1
+          maximum: 86400
+        config:
+          type: object
+          additionalProperties: true
+          nullable: true
+        recomputeFrom:
+          type: string
+          format: date-time
+
+    AutomationJob:
+      type: object
+      properties:
+        id:
+          type: string
+        projectId:
+          type: string
+        project:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            slug:
+              type: string
+            timezone:
+              type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [ANALYTICS_SNAPSHOT, ANALYTICS_EXPORT]
+        cadence:
+          type: string
+          enum: [DAILY, WEEKLY]
+        dayOfWeek:
+          type: integer
+          nullable: true
+        runAtHour:
+          type: integer
+        runAtMinute:
+          type: integer
+        timezone:
+          type: string
+          description: IANA timezone identifier resolved for schedule computation
+        status:
+          type: string
+          enum: [ACTIVE, PAUSED, DEAD_LETTER]
+        catchUpMode:
+          type: string
+          enum: [skip-missed, replay-missed]
+        dstAmbiguousTimePolicy:
+          type: string
+          enum: [earlier-offset, later-offset]
+        dstInvalidTimePolicy:
+          type: string
+          enum: [shift-forward, skip]
+        retryPolicy:
+          type: object
+          properties:
+            maxAttempts:
+              type: integer
+            backoffSeconds:
+              type: integer
+            maxBackoffSeconds:
+              type: integer
+        retryState:
+          type: object
+          properties:
+            scheduledFor:
+              type: string
+              format: date-time
+              nullable: true
+            nextAttemptNumber:
+              type: integer
+              nullable: true
+            retryFromRunId:
+              type: string
+              nullable: true
+        health:
+          type: object
+          properties:
+            totalRuns:
+              type: integer
+            successCount:
+              type: integer
+            failureCount:
+              type: integer
+            successRate:
+              type: number
+              nullable: true
+            consecutiveFailures:
+              type: integer
+            lastError:
+              type: string
+              nullable: true
+            deadLetteredAt:
+              type: string
+              format: date-time
+              nullable: true
+            deadLetterAcknowledgedAt:
+              type: string
+              format: date-time
+              nullable: true
+            deadLetterAcknowledgedByUserId:
+              type: string
+              nullable: true
+        config:
+          type: object
+          nullable: true
+          additionalProperties: true
+        lastRunAt:
+          type: string
+          format: date-time
+          nullable: true
+        lastRunStatus:
+          type: string
+          nullable: true
+        lastRunId:
+          type: string
+          nullable: true
+        nextRunAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AutomationJobRun:
+      type: object
+      properties:
+        id:
+          type: string
+        scheduledJobId:
+          type: string
+          nullable: true
+        projectId:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+        trigger:
+          type: string
+        scheduledFor:
+          type: string
+          format: date-time
+          nullable: true
+        attemptNumber:
+          type: integer
+        maxAttempts:
+          type: integer
+        retryOfRunId:
+          type: string
+          nullable: true
+        retryBackoffSeconds:
+          type: integer
+          nullable: true
+        nextRetryAt:
+          type: string
+          format: date-time
+          nullable: true
+        input:
+          type: object
+          nullable: true
+          additionalProperties: true
+        output:
+          type: object
+          nullable: true
+          additionalProperties: true
+        outputSummary:
+          type: string
+          nullable: true
+        error:
+          type: string
+          nullable: true
+        startedAt:
+          type: string
+          format: date-time
+          nullable: true
+        finishedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AutomationProcessDueRequest:
+      type: object
+      properties:
+        now:
+          type: string
+          format: date-time
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 50
+
+    AutomationProcessDueResponse:
+      type: object
+      properties:
+        now:
+          type: string
+          format: date-time
+        processed:
+          type: integer
+        remainingDue:
+          type: integer
+        runs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutomationJobRun'
+
+    AutomationSchedulerDiagnostics:
+      type: object
+      properties:
+        scheduler:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            intervalMs:
+              type: integer
+            batchLimit:
+              type: integer
+            lockLeaseMs:
+              type: integer
+            startedAt:
+              type: string
+              format: date-time
+              nullable: true
+            stoppedAt:
+              type: string
+              format: date-time
+              nullable: true
+            runningTick:
+              type: boolean
+            lastTickAt:
+              type: string
+              format: date-time
+              nullable: true
+            lastTickReason:
+              type: string
+              nullable: true
+            lastTickOutcome:
+              type: string
+              nullable: true
+            lastTickDurationMs:
+              type: integer
+              nullable: true
+            lastTickError:
+              type: string
+              nullable: true
+            overlapSkips:
+              type: integer
+            contentionCount:
+              type: integer
+            totalTicks:
+              type: integer
+            successfulTicks:
+              type: integer
+            failedTicks:
+              type: integer
+            totalRunsProcessed:
+              type: integer
+            recentTicks:
+              type: array
+              items:
+                type: object
+                properties:
+                  at:
+                    type: string
+                    format: date-time
+                  reason:
+                    type: string
+                  outcome:
+                    type: string
+                  durationMs:
+                    type: integer
+                  processed:
+                    type: integer
+                  remainingDue:
+                    type: integer
+                  error:
+                    type: string
+                    nullable: true
+        lock:
+          type: object
+          properties:
+            name:
+              type: string
+            isLocked:
+              type: boolean
+            lockedUntil:
+              type: string
+              format: date-time
+              nullable: true
+            ownerTokenHint:
+              type: string
+              nullable: true
+            updatedAt:
+              type: string
+              format: date-time
+              nullable: true
+        owner:
+          type: object
+          properties:
+            id:
+              type: string
+            activeJobs:
+              type: integer
+            dueNow:
+              type: integer
+            retryingJobs:
+              type: integer
+            deadLetterJobs:
+              type: integer
+            openAlerts:
+              type: integer
+            runWindow:
+              type: object
+              properties:
+                from:
+                  type: string
+                  format: date-time
+                to:
+                  type: string
+                  format: date-time
+            runStats:
+              type: object
+              properties:
+                total:
+                  type: integer
+                success:
+                  type: integer
+                failed:
+                  type: integer
+                running:
+                  type: integer
+                successRate:
+                  type: number
+                  nullable: true
+            trends:
+              type: object
+              properties:
+                deadLetter:
+                  type: object
+                  properties:
+                    windowHours:
+                      type: integer
+                    currentWindowCount:
+                      type: integer
+                    previousWindowCount:
+                      type: integer
+                    delta:
+                      type: integer
+                contention:
+                  type: object
+                  properties:
+                    windowMinutes:
+                      type: integer
+                    currentWindowCount:
+                      type: integer
+                    previousWindowCount:
+                      type: integer
+                    delta:
+                      type: integer
+                failures:
+                  type: object
+                  properties:
+                    windowMinutes:
+                      type: integer
+                    currentWindowCount:
+                      type: integer
+                    previousWindowCount:
+                      type: integer
+                    delta:
+                      type: integer
+            delivery:
+              type: object
+              properties:
+                windowHours:
+                  type: integer
+                totalAttempts:
+                  type: integer
+                successCount:
+                  type: integer
+                failureCount:
+                  type: integer
+                skippedCount:
+                  type: integer
+                successRate:
+                  type: number
+                  nullable: true
+                lastAttemptAt:
+                  type: string
+                  format: date-time
+                  nullable: true
+                lastError:
+                  type: string
+                  nullable: true
+            recentFailures:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  scheduledJobId:
+                    type: string
+                    nullable: true
+                  attemptNumber:
+                    type: integer
+                  maxAttempts:
+                    type: integer
+                  error:
+                    type: string
+                    nullable: true
+                  createdAt:
+                    type: string
+                    format: date-time
+
+    AutomationSchedulerTickHistoryItem:
+      type: object
+      properties:
+        id:
+          type: string
+        reason:
+          type: string
+        outcome:
+          type: string
+        durationMs:
+          type: integer
+        processed:
+          type: integer
+        remainingDue:
+          type: integer
+        error:
+          type: string
+          nullable: true
+        contention:
+          type: boolean
+        overlapSkip:
+          type: boolean
+        tickedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    AutomationAlertEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        ownerId:
+          type: string
+          nullable: true
+        projectId:
+          type: string
+          nullable: true
+        scheduledJobId:
+          type: string
+          nullable: true
+        jobRunId:
+          type: string
+          nullable: true
+        type:
+          type: string
+          enum: [DEAD_LETTER_GROWTH, FAILURE_RATE, CONSECUTIVE_FAILURES, LOCK_CONTENTION_SPIKE]
+        severity:
+          type: string
+          enum: [INFO, WARNING, CRITICAL]
+        status:
+          type: string
+          enum: [OPEN, ACKNOWLEDGED]
+        title:
+          type: string
+        message:
+          type: string
+        thresholdValue:
+          type: number
+          nullable: true
+        observedValue:
+          type: number
+          nullable: true
+        metadata:
+          type: object
+          nullable: true
+          additionalProperties: true
+        delivery:
+          type: object
+          nullable: true
+          properties:
+            provider:
+              type: string
+            status:
+              type: string
+              enum: [SENT, FAILED, SKIPPED]
+            attemptedAt:
+              type: string
+              format: date-time
+              nullable: true
+            lastError:
+              type: string
+              nullable: true
+            responseStatus:
+              type: integer
+              nullable: true
+            attemptCount:
+              type: integer
+            successCount:
+              type: integer
+            failureCount:
+              type: integer
+            skippedCount:
+              type: integer
+        acknowledgedAt:
+          type: string
+          format: date-time
+          nullable: true
+        acknowledgedByUserId:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AutomationDlqActionResult:
+      type: object
+      properties:
+        alreadyAcknowledged:
+          type: boolean
+        alreadyRequeued:
+          type: boolean
+        alreadyRetried:
+          type: boolean
+        job:
+          $ref: '#/components/schemas/AutomationJob'
+        run:
+          allOf:
+            - $ref: '#/components/schemas/AutomationJobRun'
+          nullable: true
+
+    AutomationDlqBulkActionRequest:
+      type: object
+      required: [jobIds]
+      properties:
+        jobIds:
+          type: array
+          minItems: 1
+          maxItems: 100
+          items:
+            type: string
+            minLength: 1
+            maxLength: 64
+        note:
+          type: string
+          maxLength: 500
+
+    AutomationDlqBulkActionResultItem:
+      type: object
+      properties:
+        jobId:
+          type: string
+        ok:
+          type: boolean
+        alreadyAcknowledged:
+          type: boolean
+        alreadyRequeued:
+          type: boolean
+        alreadyRetried:
+          type: boolean
+        code:
+          type: string
+          enum: [NOT_FOUND, INVALID_STATUS, DUPLICATE_JOB_ID, VALIDATION_ERROR, INTERNAL_ERROR]
+        message:
+          type: string
+        job:
+          $ref: '#/components/schemas/AutomationJob'
+        run:
+          allOf:
+            - $ref: '#/components/schemas/AutomationJobRun'
+          nullable: true
+
+    AutomationDlqBulkActionResponse:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [ack, requeue, retry-now]
+        requested:
+          type: integer
+        succeeded:
+          type: integer
+        failed:
+          type: integer
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutomationDlqBulkActionResultItem'

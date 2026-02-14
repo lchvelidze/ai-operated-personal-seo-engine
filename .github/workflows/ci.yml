@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: seo_engine
+          POSTGRES_USER: seo_user
+          POSTGRES_PASSWORD: seo_dev_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U seo_user -d seo_engine"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://seo_user:seo_dev_password@localhost:5432/seo_engine?schema=public
+      TEST_DATABASE_URL: postgresql://seo_user:seo_dev_password@localhost:5432/seo_engine?schema=ci_test
+      JWT_SECRET: ci-jwt-secret
+      TOKEN_TTL: 7d
+      BCRYPT_ROUNDS: 10
+      API_KEY: dev-api-key
+      CORS_ORIGIN: http://localhost:3000
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:4000
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: corepack pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: corepack pnpm prisma:generate
+
+      - name: Build
+        run: corepack pnpm build
+
+      - name: Test
+        run: corepack pnpm test

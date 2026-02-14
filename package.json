@@ -1,0 +1,22 @@
+{
+  "name": "ai-operated-personal-seo-engine",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.29.3",
+  "scripts": {
+    "dev": "DATABASE_URL=${DATABASE_URL:-postgresql://seo_user:seo_dev_password@localhost:5432/seo_engine?schema=public} JWT_SECRET=${JWT_SECRET:-dev-jwt-secret-local} TOKEN_TTL=${TOKEN_TTL:-7d} BCRYPT_ROUNDS=${BCRYPT_ROUNDS:-12} corepack pnpm -r --parallel --filter @seo-engine/api --filter @seo-engine/web dev",
+    "dev:api": "DATABASE_URL=${DATABASE_URL:-postgresql://seo_user:seo_dev_password@localhost:5432/seo_engine?schema=public} JWT_SECRET=${JWT_SECRET:-dev-jwt-secret-local} TOKEN_TTL=${TOKEN_TTL:-7d} BCRYPT_ROUNDS=${BCRYPT_ROUNDS:-12} corepack pnpm --filter @seo-engine/db prisma:migrate:deploy && DATABASE_URL=${DATABASE_URL:-postgresql://seo_user:seo_dev_password@localhost:5432/seo_engine?schema=public} JWT_SECRET=${JWT_SECRET:-dev-jwt-secret-local} TOKEN_TTL=${TOKEN_TTL:-7d} BCRYPT_ROUNDS=${BCRYPT_ROUNDS:-12} corepack pnpm --filter @seo-engine/api dev",
+    "dev:web": "corepack pnpm --filter @seo-engine/web dev",
+    "build": "corepack pnpm -r --filter @seo-engine/api --filter @seo-engine/web build",
+    "build:api": "corepack pnpm --filter @seo-engine/api build",
+    "build:web": "corepack pnpm --filter @seo-engine/web build",
+    "test": "corepack pnpm test:api",
+    "test:api": "node scripts/run-api-tests.mjs",
+    "prisma:generate": "corepack pnpm --filter @seo-engine/db prisma:generate",
+    "prisma:migrate": "corepack pnpm --filter @seo-engine/db prisma:migrate",
+    "seed:demo-user": "DATABASE_URL=${DATABASE_URL:-postgresql://seo_user:seo_dev_password@localhost:5432/seo_engine?schema=public} corepack pnpm --filter @seo-engine/api seed:demo-user",
+    "seed:demo-users": "DATABASE_URL=${DATABASE_URL:-postgresql://seo_user:seo_dev_password@localhost:5432/seo_engine?schema=public} corepack pnpm --filter @seo-engine/api seed:demo-users",
+    "verify:login": "node scripts/verify-login.mjs",
+    "repair:login": "corepack pnpm seed:demo-users && corepack pnpm verify:login"
+  }
+}

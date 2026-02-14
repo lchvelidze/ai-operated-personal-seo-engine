@@ -1,0 +1,686 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum ProjectStatus {
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+enum PageStatus {
+  DRAFT
+  REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum SectionKind {
+  HERO
+  INTRO
+  BODY
+  FAQ
+  CTA
+  CUSTOM
+}
+
+enum KeywordIntent {
+  INFORMATIONAL
+  COMMERCIAL
+  TRANSACTIONAL
+  NAVIGATIONAL
+}
+
+enum DeviceType {
+  DESKTOP
+  MOBILE
+}
+
+enum SearchEngine {
+  GOOGLE
+  BING
+}
+
+enum BriefStatus {
+  DRAFT
+  READY
+  APPROVED
+  ARCHIVED
+}
+
+enum TaskType {
+  WRITE
+  OPTIMIZE
+  REFRESH
+  INTERNAL_LINKS
+  OUTREACH
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  BLOCKED
+  DONE
+  FAILED
+}
+
+enum LinkStatus {
+  SUGGESTED
+  APPLIED
+  IGNORED
+}
+
+enum OutreachStatus {
+  NEW
+  CONTACTED
+  RESPONDED
+  WON
+  LOST
+}
+
+enum IndexingStatus {
+  QUEUED
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+  ERROR
+}
+
+enum IndexingProvider {
+  GSC
+  BING
+}
+
+enum AnalyticsSource {
+  GSC
+  GA4
+}
+
+enum IssueSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum IssueStatus {
+  OPEN
+  ACCEPTED_RISK
+  FIXED
+}
+
+enum AuditRule {
+  TITLE_MISSING
+  META_DESCRIPTION_MISSING
+  H1_MISSING
+  THIN_CONTENT
+  BROKEN_LINK
+  SLOW_PAGE
+  INDEXING_BLOCKED
+}
+
+enum JobType {
+  RANK_TRACK
+  BRIEF_GENERATE
+  CONTENT_OPTIMIZE
+  AUDIT_RUN
+  GSC_SYNC
+  PAGE_PUBLISH
+  INDEXING_REQUEST
+  ANALYTICS_SNAPSHOT
+  ANALYTICS_EXPORT
+}
+
+enum JobStatus {
+  QUEUED
+  RUNNING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+enum JobTrigger {
+  MANUAL
+  SCHEDULED
+  WEBHOOK
+}
+
+enum ScheduledJobCadence {
+  DAILY
+  WEEKLY
+}
+
+enum ScheduledJobStatus {
+  ACTIVE
+  PAUSED
+  DEAD_LETTER
+}
+
+enum ScheduledJobCatchUpMode {
+  SKIP_MISSED
+  REPLAY_MISSED
+}
+
+enum ScheduledJobDstAmbiguousPolicy {
+  EARLIER_OFFSET
+  LATER_OFFSET
+}
+
+enum ScheduledJobDstInvalidPolicy {
+  SHIFT_FORWARD
+  SKIP
+}
+
+enum AutomationDlqAction {
+  ACKNOWLEDGED
+  REQUEUED
+  RETRIED_NOW
+}
+
+enum AutomationAlertType {
+  DEAD_LETTER_GROWTH
+  FAILURE_RATE
+  CONSECUTIVE_FAILURES
+  LOCK_CONTENTION_SPIKE
+}
+
+enum AutomationAlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+enum AutomationAlertStatus {
+  OPEN
+  ACKNOWLEDGED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String?
+  name         String?
+  role         UserRole @default(OWNER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  projects                    Project[]
+  contentTaskTransitionEvents ContentTaskTransitionEvent[] @relation("ContentTaskTransitionActor")
+
+  @@map("users")
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  ownerId     String
+  name        String
+  slug        String
+  domain      String?
+  timezone    String        @default("UTC")
+  status      ProjectStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  owner                  User                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  pages                  Page[]
+  keywords               Keyword[]
+  rankSnapshots          RankSnapshot[]
+  contentBriefs          ContentBrief[]
+  contentTasks           ContentTask[]
+  internalLinks          InternalLink[]
+  backlinkOpportunities  BacklinkOpportunity[]
+  indexingRequests       IndexingRequest[]
+  analyticsDaily         AnalyticsDaily[]
+  auditIssues            AuditIssue[]
+  scheduledJobs          ScheduledJob[]
+  jobRuns                JobRun[]
+  automationDlqEvents    AutomationDlqEvent[]
+  automationAlertEvents  AutomationAlertEvent[]
+
+  @@unique([ownerId, slug])
+  @@index([ownerId])
+  @@map("projects")
+}
+
+model Page {
+  id              String     @id @default(cuid())
+  projectId       String
+  url             String
+  path            String
+  title           String?
+  metaDescription String?
+  status          PageStatus @default(DRAFT)
+  contentHash     String?
+  lastPublishedAt DateTime?
+  lastCrawledAt   DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  project          Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sections         PageSection[]
+  keywords         Keyword[]
+  contentBriefs    ContentBrief[]
+  contentTasks     ContentTask[]
+  sourceLinks      InternalLink[]    @relation("InternalLinkSource")
+  targetLinks      InternalLink[]    @relation("InternalLinkTarget")
+  indexingRequests IndexingRequest[]
+  analyticsDaily   AnalyticsDaily[]
+  auditIssues      AuditIssue[]
+
+  @@unique([projectId, path])
+  @@index([projectId, status])
+  @@map("pages")
+}
+
+model PageSection {
+  id        String      @id @default(cuid())
+  pageId    String
+  kind      SectionKind @default(BODY)
+  heading   String?
+  content   String
+  order     Int
+  wordCount Int?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, order])
+  @@map("page_sections")
+}
+
+model Keyword {
+  id           String        @id @default(cuid())
+  projectId    String
+  pageId       String?
+  term         String
+  intent       KeywordIntent?
+  difficulty   Int?
+  cpc          Decimal?      @db.Decimal(10, 2)
+  searchVolume Int?
+  locale       String        @default("en-US")
+  device       DeviceType    @default(DESKTOP)
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  project       Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  page          Page?          @relation(fields: [pageId], references: [id], onDelete: SetNull)
+  rankSnapshots RankSnapshot[]
+  contentBriefs ContentBrief[]
+
+  @@unique([projectId, term, locale, device])
+  @@index([projectId, isActive])
+  @@map("keywords")
+}
+
+model RankSnapshot {
+  id           String       @id @default(cuid())
+  projectId    String
+  keywordId    String
+  recordedAt   DateTime     @default(now())
+  engine       SearchEngine @default(GOOGLE)
+  locale       String       @default("en-US")
+  device       DeviceType   @default(DESKTOP)
+  rank         Int?
+  url          String?
+  serpFeatures Json?
+  createdAt    DateTime     @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  keyword Keyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+
+  @@unique([keywordId, recordedAt, engine, locale, device])
+  @@index([projectId, recordedAt])
+  @@map("rank_snapshots")
+}
+
+model ContentBrief {
+  id          String      @id @default(cuid())
+  projectId   String
+  pageId      String?
+  keywordId   String?
+  title       String
+  objective   String?
+  audience    String?
+  outline     Json?
+  status      BriefStatus @default(DRAFT)
+  generatedBy String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  project Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  page    Page?        @relation(fields: [pageId], references: [id], onDelete: SetNull)
+  keyword Keyword?     @relation(fields: [keywordId], references: [id], onDelete: SetNull)
+  tasks   ContentTask[]
+
+  @@index([projectId, status])
+  @@map("content_briefs")
+}
+
+model ContentTask {
+  id          String     @id @default(cuid())
+  projectId   String
+  briefId     String?
+  pageId      String?
+  jobRunId    String?
+  type        TaskType
+  status      TaskStatus @default(TODO)
+  priority    Int        @default(3)
+  payload     Json?
+  result      Json?
+  error       String?
+  dueAt       DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  project     Project                       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  brief       ContentBrief?                 @relation(fields: [briefId], references: [id], onDelete: SetNull)
+  page        Page?                         @relation(fields: [pageId], references: [id], onDelete: SetNull)
+  jobRun      JobRun?                       @relation(fields: [jobRunId], references: [id], onDelete: SetNull)
+  transitions ContentTaskTransitionEvent[]
+
+  @@index([projectId, status, priority])
+  @@map("content_tasks")
+}
+
+model ContentTaskTransitionEvent {
+  id            String     @id @default(cuid())
+  contentTaskId String
+  fromStatus    TaskStatus
+  toStatus      TaskStatus
+  actorUserId   String?
+  actorEmail    String
+  actorSource   String
+  note          String?
+  createdAt     DateTime   @default(now())
+
+  contentTask ContentTask @relation(fields: [contentTaskId], references: [id], onDelete: Cascade)
+  actorUser   User?       @relation("ContentTaskTransitionActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([contentTaskId, createdAt])
+  @@index([actorUserId])
+  @@map("content_task_transition_events")
+}
+
+model InternalLink {
+  id           String     @id @default(cuid())
+  projectId    String
+  sourcePageId String
+  targetPageId String
+  anchorText   String
+  status       LinkStatus @default(SUGGESTED)
+  reason       String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sourcePage Page    @relation("InternalLinkSource", fields: [sourcePageId], references: [id], onDelete: Cascade)
+  targetPage Page    @relation("InternalLinkTarget", fields: [targetPageId], references: [id], onDelete: Cascade)
+
+  @@unique([sourcePageId, targetPageId, anchorText])
+  @@index([projectId, status])
+  @@map("internal_links")
+}
+
+model BacklinkOpportunity {
+  id             String         @id @default(cuid())
+  projectId      String
+  sourceDomain   String
+  targetUrl      String
+  contactEmail   String?
+  authorityScore Int?
+  status         OutreachStatus @default(NEW)
+  notes          String?
+  nextActionAt   DateTime?
+  lastContactedAt DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, status])
+  @@map("backlink_opportunities")
+}
+
+model IndexingRequest {
+  id          String           @id @default(cuid())
+  projectId   String
+  pageId      String?
+  url         String
+  provider    IndexingProvider @default(GSC)
+  status      IndexingStatus   @default(QUEUED)
+  requestedAt DateTime         @default(now())
+  processedAt DateTime?
+  response    Json?
+  error       String?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  page    Page?   @relation(fields: [pageId], references: [id], onDelete: SetNull)
+
+  @@index([projectId, status, requestedAt])
+  @@map("indexing_requests")
+}
+
+model AnalyticsDaily {
+  id          String          @id @default(cuid())
+  projectId   String
+  pageId      String?
+  date        DateTime
+  source      AnalyticsSource @default(GSC)
+  clicks      Int             @default(0)
+  impressions Int             @default(0)
+  ctr         Float?
+  avgPosition Float?
+  sessions    Int?
+  users       Int?
+  conversions Int?
+  revenue     Decimal?        @db.Decimal(12, 2)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  page    Page?   @relation(fields: [pageId], references: [id], onDelete: SetNull)
+
+  @@unique([projectId, pageId, date, source])
+  @@index([projectId, date])
+  @@map("analytics_daily")
+}
+
+model AuditIssue {
+  id             String        @id @default(cuid())
+  projectId      String
+  pageId         String?
+  rule           AuditRule
+  severity       IssueSeverity @default(MEDIUM)
+  status         IssueStatus   @default(OPEN)
+  title          String
+  description    String?
+  recommendation String?
+  metadata       Json?
+  detectedAt     DateTime      @default(now())
+  resolvedAt     DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  page    Page?   @relation(fields: [pageId], references: [id], onDelete: SetNull)
+
+  @@index([projectId, status, severity])
+  @@map("audit_issues")
+}
+
+model ScheduledJob {
+  id                      String                        @id @default(cuid())
+  projectId               String
+  name                    String
+  type                    JobType
+  cadence                 ScheduledJobCadence
+  dayOfWeek               Int?
+  runAtHour               Int                           @default(0)
+  runAtMinute             Int                           @default(0)
+  timezone                String                        @default("UTC")
+  status                  ScheduledJobStatus            @default(ACTIVE)
+  catchUpMode             ScheduledJobCatchUpMode       @default(SKIP_MISSED)
+  dstAmbiguousTimePolicy  ScheduledJobDstAmbiguousPolicy @default(EARLIER_OFFSET)
+  dstInvalidTimePolicy    ScheduledJobDstInvalidPolicy  @default(SHIFT_FORWARD)
+  retryMaxAttempts        Int                           @default(3)
+  retryBackoffSeconds     Int                           @default(60)
+  retryMaxBackoffSeconds  Int                           @default(900)
+  retryScheduledFor       DateTime?
+  retryAttempt            Int?
+  retryFromRunId          String?
+  config                  Json?
+  successCount            Int                           @default(0)
+  failureCount            Int                           @default(0)
+  consecutiveFailures     Int                           @default(0)
+  deadLetteredAt          DateTime?
+  deadLetterAcknowledgedAt DateTime?
+  deadLetterAcknowledgedByUserId String?
+  lastError               String?
+  lastRunAt               DateTime?
+  lastRunStatus           JobStatus?
+  lastRunId               String?
+  nextRunAt               DateTime?
+  createdAt               DateTime                      @default(now())
+  updatedAt               DateTime                      @updatedAt
+
+  project    Project                 @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  runs       JobRun[]
+  dlqEvents  AutomationDlqEvent[]
+  alertEvents AutomationAlertEvent[]
+
+  @@index([projectId, status, nextRunAt])
+  @@map("scheduled_jobs")
+}
+
+model JobRun {
+  id                  String     @id @default(cuid())
+  projectId           String
+  scheduledJobId      String?
+  type                JobType
+  status              JobStatus  @default(QUEUED)
+  trigger             JobTrigger @default(MANUAL)
+  idempotencyKey      String?    @unique
+  scheduledFor        DateTime?
+  attemptNumber       Int        @default(1)
+  maxAttempts         Int        @default(1)
+  retryOfRunId        String?
+  retryBackoffSeconds Int?
+  nextRetryAt         DateTime?
+  input               Json?
+  output              Json?
+  outputSummary       String?
+  error               String?
+  startedAt           DateTime?
+  finishedAt          DateTime?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  project      Project                @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  scheduledJob ScheduledJob?          @relation(fields: [scheduledJobId], references: [id], onDelete: SetNull)
+  tasks        ContentTask[]
+  dlqEvents    AutomationDlqEvent[]
+  alertEvents  AutomationAlertEvent[]
+
+  @@index([projectId, type, status, createdAt])
+  @@index([scheduledJobId, createdAt])
+  @@index([scheduledJobId, scheduledFor, attemptNumber])
+  @@map("job_runs")
+}
+
+model SchedulerLock {
+  name        String   @id
+  ownerToken  String?
+  lockedUntil DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("scheduler_locks")
+}
+
+model AutomationSchedulerTickEvent {
+  id            String   @id @default(cuid())
+  reason        String
+  outcome       String
+  durationMs    Int
+  processed     Int      @default(0)
+  remainingDue  Int      @default(0)
+  errorSummary  String?
+  isContention  Boolean  @default(false)
+  isOverlapSkip Boolean  @default(false)
+  tickedAt      DateTime
+  createdAt     DateTime @default(now())
+
+  @@index([tickedAt])
+  @@index([outcome, tickedAt])
+  @@map("automation_scheduler_tick_events")
+}
+
+model AutomationDlqEvent {
+  id                String            @id @default(cuid())
+  ownerId           String
+  projectId         String
+  scheduledJobId    String
+  jobRunId          String?
+  action            AutomationDlqAction
+  note              String?
+  metadata          Json?
+  idempotencyKey    String?
+  performedByUserId String?
+  createdAt         DateTime          @default(now())
+
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  scheduledJob ScheduledJob @relation(fields: [scheduledJobId], references: [id], onDelete: Cascade)
+  jobRun       JobRun?      @relation(fields: [jobRunId], references: [id], onDelete: SetNull)
+
+  @@index([ownerId, createdAt])
+  @@index([scheduledJobId, createdAt])
+  @@index([action, createdAt])
+  @@unique([ownerId, action, idempotencyKey])
+  @@map("automation_dlq_events")
+}
+
+model AutomationAlertEvent {
+  id                     String                  @id @default(cuid())
+  ownerId                String?
+  projectId              String?
+  scheduledJobId         String?
+  jobRunId               String?
+  type                   AutomationAlertType
+  severity               AutomationAlertSeverity @default(WARNING)
+  status                 AutomationAlertStatus   @default(OPEN)
+  title                  String
+  message                String
+  dedupeKey              String?
+  thresholdValue         Float?
+  observedValue          Float?
+  metadata               Json?
+  acknowledgedAt         DateTime?
+  acknowledgedByUserId   String?
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+
+  project      Project?      @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  scheduledJob ScheduledJob? @relation(fields: [scheduledJobId], references: [id], onDelete: SetNull)
+  jobRun       JobRun?       @relation(fields: [jobRunId], references: [id], onDelete: SetNull)
+
+  @@index([ownerId, status, createdAt])
+  @@index([type, createdAt])
+  @@index([dedupeKey, createdAt])
+  @@map("automation_alert_events")
+}
