@@ -719,3 +719,7 @@ GitHub Actions workflow: `.github/workflows/ci.yml`
 - Page `path` values are normalized (leading slash, no query/hash, no trailing slash except `/`).
 - Page `url` values are normalized to HTTP(S); when omitted on create (or when only `path` changes on update), URL is derived from project domain.
 - CORS allows `http://localhost:3000` by default.
+
+## Author
+
+Maintained by **Levan Chvelidze** — GitHub: [@lchvelidze](https://github.com/lchvelidze).
